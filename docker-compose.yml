@@ -12,7 +12,7 @@ services:
             MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     php:
         build:
-            context: php7-fpm
+            context: php5-fpm
             args:
                 TIMEZONE: ${TIMEZONE}
         volumes:
