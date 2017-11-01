@@ -1,4 +1,4 @@
-# Docker Symfony (PHP7-FPM - NGINX - MySQL - ELK)
+# Docker Symfony (PHP5.6-FPM - NGINX - MySQL - ELK - PHPMyAdmin)
 
 [![Build Status](https://travis-ci.org/maxpou/docker-symfony.svg?branch=master)](https://travis-ci.org/maxpou/docker-symfony)
 
