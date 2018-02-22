@@ -1,7 +1,5 @@
-FROM php:5.6-fpm
+FROM helder/php-5.3
 ARG TIMEZONE
-
-MAINTAINER Maxence POUTORD <maxence.poutord@gmail.com>
 
 RUN apt-get update && apt-get install -y \
     openssl \
@@ -11,16 +9,16 @@ RUN apt-get update && apt-get install -y \
     memcached \
     php5-memcached \
     libxml2-dev \
-    php-soap \
     libmcrypt-dev \
-    php5-mcrypt
-
-RUN apt-get -y install libz-dev libmemcached-dev libmemcached11 libmemcachedutil2 build-essential \
+    libmagickwand-dev \
+    libmagickcore-dev \
+    php5-imagick \
+    php5-mcrypt \
+    imagemagick libz-dev libmemcached-dev libmemcached11 libmemcachedutil2 build-essential \
   && pecl install memcache \
-  && echo extension=memcache.so >> /usr/local/etc/php/conf.d/memcached.ini \
+  && pecl install imagick-3.3.0 \
   && docker-php-ext-configure soap --enable-soap \
-  && docker-php-ext-install soap \
-  && docker-php-ext-install mcrypt \
+  && docker-php-ext-install pdo_mysql soap mysqli zip bcmath bz2 calendar mbstring mcrypt \
   && apt-get remove -y build-essential libmemcached-dev libz-dev \
   && apt-get autoremove -y \
   && apt-get clean \
@@ -35,22 +33,23 @@ RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && echo ${TIMEZONE} >
 RUN printf '[PHP]\ndate.timezone = "%s"\n', ${TIMEZONE} > /usr/local/etc/php/conf.d/tzone.ini
 RUN "date"
 
-# Type docker-php-ext-install to see available extensions
-RUN docker-php-ext-install pdo pdo_mysql
+# Increase upload limits in ini file
+RUN echo "upload_max_filesize = 250M" >> /usr/local/etc/php/conf.d/upload-max-size.ini
+RUN echo "memory_limit = 300M" >> /usr/local/etc/php/conf.d/upload-max-size.ini
+RUN echo "post_max_size = 255M" >> /usr/local/etc/php/conf.d/upload-max-size.ini
 
-# install xdebug
-RUN pecl install xdebug
-RUN docker-php-ext-enable xdebug
-RUN echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-RUN echo "display_startup_errors = On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-RUN echo "display_errors = On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-RUN echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-RUN echo "xdebug.remote_connect_back=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-RUN echo "xdebug.idekey=\"PHPSTORM\"" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-RUN echo "xdebug.remote_port=9001" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+#enable php extensions
+RUN echo extension=imagick.so >> /usr/local/etc/php/conf.d/imagick.ini
+RUN echo extension=memcache.so >> /usr/local/etc/php/conf.d/memcached.ini
 
+RUN mkdir /usr/local/rctdev
+RUN mkdir /usr/local/pbodev
+RUN mkdir /usr/local/gsdev
+RUN mkdir /usr/local/ehs
 
-RUN echo 'alias sf="php app/console"' >> ~/.bashrc
-RUN echo 'alias sf3="php bin/console"' >> ~/.bashrc
+RUN chmod 777 /usr/local/rctdev
+RUN chmod 777 /usr/local/pbodev
+RUN chmod 777 /usr/local/gsdev
+RUN chmod 777 /usr/local/ehs
 
 WORKDIR /var/www

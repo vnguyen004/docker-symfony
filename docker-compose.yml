@@ -6,6 +6,9 @@ services:
         image: mysql
         volumes:
             - "./.data/db:/var/lib/mysql"
+            - ./mysql:/etc/mysql/conf.d
+        ports:
+            - 3306:3306
         environment:
             MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
             MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -22,12 +25,30 @@ services:
                 TIMEZONE: ${TIMEZONE}
         volumes:
             - ${SYMFONY_APP_PATH}:/var/www
+            - ../uploads/gsdev/:/usr/local/gsdev
+            - ../uploads/ehs:/usr/local/ehs
+            - ../uploads/jobclass:/usr/local/jobclass
+            - ../uploads/pbodev:/usr/local/pbodev
+            - ../uploads/rctdev:/usr/local/rctdev
+    php56:
+        build:
+            context: php56-fpm
+            args:
+                TIMEZONE: ${TIMEZONE}
+        volumes:
+            - ${SYMFONY_APP_PATH}:/var/www
+            - ../uploads/gsdev/:/usr/local/gsdev
+            - ../uploads/ehs:/usr/local/ehs
+            - ../uploads/jobclass:/usr/local/jobclass
+            - ../uploads/pbodev:/usr/local/pbodev
+            - ../uploads/rctdev:/usr/local/rctdev
     nginx:
         build: nginx
         ports:
             - 80:80
         volumes_from:
             - php
+            - php56
         volumes:
             - ./logs/nginx/:/var/log/nginx
     phpmyadmin:
@@ -36,3 +57,7 @@ services:
             - "8080:80"
         links:
             - db
+    redis:
+        image: redis:alpine
+        ports:
+            - 6379:6379
