@@ -11,12 +11,14 @@ ADD agslms.conf /etc/nginx/sites-available/
 ADD rctlms.conf /etc/nginx/sites-available/
 ADD cirlms.conf /etc/nginx/sites-available/
 ADD ehslms.conf /etc/nginx/sites-available/
+ADD ehslms4.conf /etc/nginx/sites-available/
 
 RUN ln -s /etc/nginx/sites-available/pbolms.conf /etc/nginx/sites-enabled/pbolms
 RUN ln -s /etc/nginx/sites-available/agslms.conf /etc/nginx/sites-enabled/agslms
 RUN ln -s /etc/nginx/sites-available/rctlms.conf /etc/nginx/sites-enabled/rctlms
 RUN ln -s /etc/nginx/sites-available/cirlms.conf /etc/nginx/sites-enabled/cirlms
 RUN ln -s /etc/nginx/sites-available/ehslms.conf /etc/nginx/sites-enabled/ehslms
+RUN ln -s /etc/nginx/sites-available/ehslms4.conf /etc/nginx/sites-enabled/ehslms4
 
 RUN rm /etc/nginx/sites-enabled/default
 

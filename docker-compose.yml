@@ -3,14 +3,27 @@ version: '2'
 services:
     db:
         user: "1000:50"
-        image: mysql
+        image: mysql:5.5
+        volumes:
+            - "./.data/db2:/var/lib/mysql"
+            - ./mysql:/etc/mysql/conf.d
+        ports:
+            - 8083:3306
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    dbl:
+        user: "1000:50"
+        image: mariadb
         volumes:
             - "./.data/db:/var/lib/mysql"
             - ./mysql:/etc/mysql/conf.d
         ports:
-            - 3306:3306
+            - 8084:3306
         environment:
-            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: ${MYSQL_DATABASE}
             MYSQL_USER: ${MYSQL_USER}
             MYSQL_PASSWORD: ${MYSQL_PASSWORD}
@@ -24,24 +37,38 @@ services:
             args:
                 TIMEZONE: ${TIMEZONE}
         volumes:
-            - ${SYMFONY_APP_PATH}:/var/www
-            - ../uploads/gsdev/:/usr/local/gsdev
+            - ../symfony:/var/www/symfony:cached
+            - ../EHS:/var/www/EHS
+            - ../tools:/var/www/tools
             - ../uploads/ehs:/usr/local/ehs
-            - ../uploads/jobclass:/usr/local/jobclass
-            - ../uploads/pbodev:/usr/local/pbodev
-            - ../uploads/rctdev:/usr/local/rctdev
+            - ../uploads/jobclass:/usr/local/jobclass:cached
     php56:
         build:
             context: php56-fpm
             args:
                 TIMEZONE: ${TIMEZONE}
         volumes:
-            - ${SYMFONY_APP_PATH}:/var/www
+            - ../symfony:/var/www/symfony:cached
+            - ../AGSLMS:/var/www/AGSLMS
+            - ../PBOLMS:/var/www/PBOLMS
+            - ../RCTLMS:/var/www/RCTLMS
             - ../uploads/gsdev/:/usr/local/gsdev
-            - ../uploads/ehs:/usr/local/ehs
-            - ../uploads/jobclass:/usr/local/jobclass
+            - ../uploads/jobclass:/usr/local/jobclass:cached
             - ../uploads/pbodev:/usr/local/pbodev
             - ../uploads/rctdev:/usr/local/rctdev
+    php7:
+        build:
+            context: php7-fpm
+            args:
+                TIMEZONE: ${TIMEZONE}
+        volumes:
+            - ../EHS_SF4_PHP:/var/www/EHS_SF4_PHP
+            - ../EHS_SF4_PHP/vendor:/var/www/EHS_SF4_PHP/vendor:cached
+            - ../EHS_SF4_PHP/var:/var/www/EHS_SF4_PHP/var:cached
+            - ../uploads/ehs:/usr/local/ehs
+            - ../uploads/jobclass:/usr/local/jobclass
+            - ../symfony:/var/www/symfony:cached
+            - ../EHS:/var/www/EHS
     nginx:
         build: nginx
         ports:
@@ -49,14 +76,21 @@ services:
         volumes_from:
             - php
             - php56
+            - php7
         volumes:
-            - ./logs/nginx/:/var/log/nginx
+            - ./logs/:/var/log
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
         ports:
             - "8080:80"
         links:
             - db
+    phpmyadmin2:
+        image: phpmyadmin/phpmyadmin
+        ports:
+            - "8081:80"
+        links:
+            - dbl
     redis:
         image: redis:alpine
         ports:

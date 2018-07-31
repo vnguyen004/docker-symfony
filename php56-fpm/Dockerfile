@@ -5,14 +5,10 @@ RUN apt-get update && apt-get install -y \
     openssl \
     git \
     unzip \
-    php5-memcache \
     memcached \
-    php5-memcached \
     libxml2-dev \
     php-soap \
     libmcrypt-dev \
-    php5-mcrypt \
-    php5-mysql \
     libmagickwand-dev \
     imagemagick
 
