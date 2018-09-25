@@ -2,3 +2,4 @@
 secure_file_priv=""
 sql_mode = "ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
 lower_case_table_names = 1
+max_allowed_packet = 64M

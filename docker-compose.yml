@@ -62,9 +62,9 @@ services:
             args:
                 TIMEZONE: ${TIMEZONE}
         volumes:
-            - ../EHS_SF4_PHP:/var/www/EHS_SF4_PHP
-            - ../EHS_SF4_PHP/vendor:/var/www/EHS_SF4_PHP/vendor:cached
-            - ../EHS_SF4_PHP/var:/var/www/EHS_SF4_PHP/var:cached
+            - ../EHS4:/var/www/EHS4
+            - ../EHS4/vendor:/var/www/EHS4/vendor:cached
+            - ../EHS4/var:/var/www/EHS4/var:cached
             - ../uploads/ehs:/usr/local/ehs
             - ../uploads/jobclass:/usr/local/jobclass
             - ../symfony:/var/www/symfony:cached
@@ -85,12 +85,7 @@ services:
             - "8080:80"
         links:
             - db
-    phpmyadmin2:
-        image: phpmyadmin/phpmyadmin
-        ports:
-            - "8081:80"
-        links:
-            - dbl
+
     redis:
         image: redis:alpine
         ports:

@@ -7,7 +7,6 @@ RUN apt-get update && apt-get install -y \
     unzip \
     memcached \
     libxml2-dev \
-    php-soap \
     libmcrypt-dev \
     libmagickwand-dev \
     imagemagick
