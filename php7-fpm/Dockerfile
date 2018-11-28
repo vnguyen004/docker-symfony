@@ -9,6 +9,7 @@ libfreetype6-dev \
 libjpeg62-turbo-dev \
 libmcrypt-dev \
 libpng-dev \
+libicu-dev \
 libsqlite3-dev \
 libcurl4-gnutls-dev \
 && apt-get install git -y \
@@ -17,7 +18,8 @@ libcurl4-gnutls-dev \
 && docker-php-ext-install -j$(nproc) iconv pdo_mysql gd zip curl bcmath intl opcache mbstring gd \
 && pecl install mcrypt-1.0.1 \
 && pecl install apcu \
-&& docker-php-ext-enable apcu mcrypt \
+&& pecl install redis \
+&& docker-php-ext-enable apcu mcrypt redis \
 && apt-get autoremove -y
 
 RUN apt-get update && apt-get install -y libmagickwand-6.q16-dev --no-install-recommends \
